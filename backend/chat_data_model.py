@@ -271,9 +271,9 @@ def init_chat_db(database):
                     status=tool_info.get("status"),
                     tokens_used=tool_info.get("total_tokens")
                 )
-            db.session.add(tool_usage)
-            db.session.commit()
-            return tool_usage
+                db.session.add(tool_usage)
+                db.session.commit()
+            return 
 
         def get_conversation_history(self, limit: int = 50):
             """Retrieve conversation history for this session"""
