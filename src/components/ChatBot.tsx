@@ -26,43 +26,38 @@ const ChatBot: React.FC<ChatBotProps> = () => {
   const API_URL = 'http://127.0.0.1:5001/api';
   const ANALYTICS_API_URL = 'http://127.0.0.1:5002/api';
 
-  // Initialize or get existing session
+  // Always create a new session on component mount (ignoring localStorage)
   useEffect(() => {
-    const initializeSession = async () => {
-      // Try to get existing session from localStorage
-      const savedSessionId = localStorage.getItem('chatSessionId');
-      
-      if (savedSessionId) {
-        setSessionId(savedSessionId);
-      } else {
-        // Create a new session
-        try {
-          const response = await fetch(`${ANALYTICS_API_URL}/chat/sessions`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              title: `Chat Session ${new Date().toLocaleString()}`,
-              user_id: 'user_1' 
-            }),
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            setSessionId(data.session_id);
-            localStorage.setItem('chatSessionId', data.session_id);
-          }
-        } catch (error) {
-          console.error("Failed to create session:", error);
-          // If session creation fails, generate a temporary one
-          const tempSessionId = `temp_session_${Date.now()}`;
-          setSessionId(tempSessionId);
-          localStorage.setItem('chatSessionId', tempSessionId);
+    const createNewSession = async () => {
+      try {
+        const response = await fetch(`${ANALYTICS_API_URL}/chat/sessions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            title: `Chat Session ${new Date().toLocaleString()}`,
+            user_id: 'user_1' 
+          }),
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setSessionId(data.session_id);
+          localStorage.setItem('chatSessionId', data.session_id);
+          console.log(`✅ New chat session created: ${data.session_id}`);
         }
+      } catch (error) {
+        console.error("Failed to create session:", error);
+        // If session creation fails, generate a temporary one with timestamp
+        const tempSessionId = `temp_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        setSessionId(tempSessionId);
+        localStorage.setItem('chatSessionId', tempSessionId);
+        console.log(`🔄 Fallback session created: ${tempSessionId}`);
       }
     };
 
-    initializeSession();
-  }, []);
+    // Always create a new session, regardless of what's in localStorage
+    createNewSession();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

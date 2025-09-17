@@ -23,9 +23,13 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Clear previous session data on app launch
+    localStorage.removeItem('chatSessionId');
+    console.log('🧹 Previous chat session cleared - new session will be created');
+    
     loadBankingData();
   }, []);
-
+  
   const loadBankingData = async () => {
     setLoading(true);
     setError(null);
