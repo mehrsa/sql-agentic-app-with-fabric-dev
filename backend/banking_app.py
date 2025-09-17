@@ -26,6 +26,8 @@ load_dotenv(override=True)
 
 app = Flask(__name__)
 CORS(app)
+global fixed_user_iduser_id
+fixed_user_id = "user_2"  # For simplicity, using a fixed user ID
 
 # --- Azure OpenAI Configuration ---
 AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")
@@ -153,7 +155,7 @@ def call_analytics_service(endpoint, method='POST', data=None):
         return None
 
 # AI Chatbot Tool Definitions (same as before)
-def get_user_accounts(user_id: str = 'user_1') -> str:
+def get_user_accounts(user_id: str = fixed_user_id) -> str:
     """Retrieves all accounts for a given user."""
     try:
         accounts = Account.query.filter_by(user_id=user_id).all()
@@ -166,7 +168,7 @@ def get_user_accounts(user_id: str = 'user_1') -> str:
     except Exception as e:
         return f"Error retrieving accounts: {str(e)}"
 
-def get_transactions_summary(user_id: str = 'user_1', time_period: str = 'this month', account_name: str = None) -> str:
+def get_transactions_summary(user_id: str = fixed_user_id, time_period: str = 'this month', account_name: str = None) -> str:
     """Provides a summary of the user's spending. Can be filtered by a time period and a specific account."""
     try:
         query = db.session.query(Transaction.category, db.func.sum(Transaction.amount).label('total_spent')).filter(
@@ -227,7 +229,7 @@ def search_support_documents(user_question: str) -> str:
         print(f"ERROR in search_support_documents: {e}")
         return "An error occurred while searching for support documents."
 
-def create_new_account(user_id: str = 'user_1', account_type: str = 'checking', name: str = None, balance: float = 0.0) -> str:
+def create_new_account(user_id: str = fixed_user_id, account_type: str = 'checking', name: str = None, balance: float = 0.0) -> str:
     """Creates a new bank account for the user."""
     if not name:
         return json.dumps({"status": "error", "message": "An account name is required."})
@@ -243,7 +245,7 @@ def create_new_account(user_id: str = 'user_1', account_type: str = 'checking', 
         db.session.rollback()
         return f"Error creating account: {str(e)}"
 
-def transfer_money(user_id: str = 'user_1', from_account_name: str = None, to_account_name: str = None, amount: float = 0.0, to_external_details: dict = None) -> str:
+def transfer_money(user_id: str = fixed_user_id, from_account_name: str = None, to_account_name: str = None, amount: float = 0.0, to_external_details: dict = None) -> str:
     """Transfers money between user's accounts or to an external account."""
     if not from_account_name or (not to_account_name and not to_external_details) or amount <= 0:
         return json.dumps({"status": "error", "message": "Missing required transfer details."})
@@ -278,7 +280,7 @@ def transfer_money(user_id: str = 'user_1', from_account_name: str = None, to_ac
 # Banking API Routes
 @app.route('/api/accounts', methods=['GET', 'POST'])
 def handle_accounts():
-    user_id = 'user_1'
+    user_id = fixed_user_id
     if request.method == 'GET':
         accounts = Account.query.filter_by(user_id=user_id).all()
         return jsonify([acc.to_dict() for acc in accounts])
@@ -289,7 +291,7 @@ def handle_accounts():
 
 @app.route('/api/transactions', methods=['GET', 'POST'])
 def handle_transactions():
-    user_id = 'user_1'
+    user_id = fixed_user_id
     if request.method == 'GET':
         accounts = Account.query.filter_by(user_id=user_id).all()
         account_ids = [acc.id for acc in accounts]
@@ -314,8 +316,8 @@ def chatbot():
     data = request.json
     messages = data.get("messages", [])
     session_id = data.get("session_id")
-    user_id = data.get("user_id", "user_1")
-    
+    user_id = fixed_user_id
+
     print(messages)
 
     # Extract user message and define tools
