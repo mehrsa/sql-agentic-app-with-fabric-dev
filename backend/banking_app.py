@@ -16,6 +16,7 @@ from langchain_community.vectorstores.utils import DistanceStrategy
 from langchain_sqlserver import SQLServer_VectorStore
 
 from shared.db_connect import fabricsql_connection_bank_db
+from shared.utils import get_user_id
 import requests  # For calling analytics service
 from langgraph.prebuilt import create_react_agent
 from shared.utils import _serialize_messages
@@ -26,8 +27,8 @@ load_dotenv(override=True)
 
 app = Flask(__name__)
 CORS(app)
-global fixed_user_iduser_id
-fixed_user_id = "user_2"  # For simplicity, using a fixed user ID
+global fixed_user_id
+fixed_user_id = get_user_id()  # For simplicity, using a fixed user ID
 
 # --- Azure OpenAI Configuration ---
 AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")

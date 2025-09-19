@@ -97,3 +97,7 @@ def _to_obj(val):
         return [_to_obj(x) for x in val]
     return val
 
+def get_user_id():
+    """Utility to get a fixed user ID for demo purposes."""
+    user_id = 'user_5'
+    return user_id
