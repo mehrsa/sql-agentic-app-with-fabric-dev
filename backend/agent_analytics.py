@@ -40,6 +40,7 @@ from chat_data_model import (
 # Chat History API Routes
 @app.route('/api/chat/sessions', methods=['GET', 'POST'])
 def chat_sessions_route():
+    print("Handling chat sessions request...")
     return handle_chat_sessions(request)
 
 @app.route('/api/admin/clear-chat-history', methods=['DELETE'])

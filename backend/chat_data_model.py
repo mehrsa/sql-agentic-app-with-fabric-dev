@@ -107,7 +107,7 @@ def init_chat_db(database):
     
         finish_reason = db.Column(db.String(255))
         response_time_ms = db.Column(db.Integer)
-        trace_end = db.Column(db.DateTime, default=datetime.now())
+        trace_end = db.Column(db.DateTime)
 
         def to_dict(self):
             return to_dict_helper(self)
@@ -134,6 +134,7 @@ def init_chat_db(database):
         def add_trace_messages(self, serialized_messages: str, 
                                trace_duration: int):
             """Add all messages in a trace to the chat history"""
+            self.ai_response_timestamp= datetime.now()
             trace_id = str(uuid.uuid4())
             message_list= _to_json_primitive(serialized_messages)
             print("New trace_id generated. Adding all messages for trace_id:", trace_id)
@@ -187,6 +188,7 @@ def init_chat_db(database):
                 content_filter_results=message["response_metadata"].get("prompt_filter_results")[0].get("content_filter_results"),
                 finish_reason=message["response_metadata"].get("finish_reason"),
                 response_time_ms=trace_duration,
+                trace_end = self.ai_response_timestamp
             )
             db.session.add(entry_message)
             db.session.commit()
