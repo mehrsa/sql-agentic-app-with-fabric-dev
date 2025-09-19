@@ -29,7 +29,6 @@ CREATE TABLE tool_definitions (
     cost_per_call_cents INT DEFAULT 0,
     created_at DATETIME2 DEFAULT GETUTCDATE(),
     updated_at DATETIME2 DEFAULT GETUTCDATE()
-    -- Remove average_execution_time_ms as it's not in the Python model
 );
 
 
@@ -51,7 +50,7 @@ CREATE TABLE chat_history (
 
     finish_reason NVARCHAR(255),       -- Reason for finishing the message
     response_time_ms INT,              -- Response time in milliseconds
-    trace_end NVARCHAR(255),           -- End time of the trace
+    trace_end DATETIME2 DEFAULT GETUTCDATE(),           -- End time of the trace
 
     -- Tool usage fields (embedded in message)
     tool_call_id NVARCHAR(255),
