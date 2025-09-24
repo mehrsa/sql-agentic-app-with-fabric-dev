@@ -78,7 +78,7 @@ def log_trace():
         data = request.json
         chat_manager = ChatHistoryManager(
             session_id=data.get('session_id'),
-            user_id=data.get('user_id', 'user_1')
+            user_id=data.get('user_id')
         )
         # call into the chat history manager (note: method expects 'message' kw)
         chat_manager.add_trace_messages(

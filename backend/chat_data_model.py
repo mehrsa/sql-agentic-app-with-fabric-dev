@@ -3,6 +3,7 @@ from datetime import datetime
 import json
 from flask import jsonify
 from shared.utils import _to_json_primitive
+from shared.utils import get_user_id
 # Global variables that will be set by the main app
 db = None
 ChatHistory = None
@@ -293,7 +294,7 @@ def init_chat_db(database):
 
 def handle_chat_sessions(request):
     """Handle chat sessions GET and POST requests"""
-    user_id = 'user_1'  # In production, get from auth
+    user_id = get_user_id()  # In production, get from auth
     
     if request.method == 'GET':
         sessions = ChatSession.query.filter_by(user_id=user_id).order_by(ChatSession.updated_at.desc()).all()
@@ -302,6 +303,7 @@ def handle_chat_sessions(request):
     if request.method == 'POST':
         data = request.json
         session = ChatSession(
+            session_id = data.get('session_id'),
             user_id=user_id,
             title=data.get('title', 'New Chat Session'),
         )
