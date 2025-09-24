@@ -164,6 +164,7 @@ def init_chat_db(database):
                 message_id = message["id"],
                 message_type="human",
                 content=message['content'],
+                trace_end = self.ai_response_timestamp
             )
             db.session.add(entry_message)
             db.session.commit()
@@ -218,6 +219,7 @@ def init_chat_db(database):
                 model_name=message["response_metadata"].get('model_name'),
                 content_filter_results=message["response_metadata"].get("prompt_filter_results")[0].get("content_filter_results"),
                 finish_reason=message["response_metadata"].get("finish_reason"),
+                trace_end = self.ai_response_timestamp
             )
             db.session.add(entry_message)
             db.session.commit()
@@ -242,6 +244,7 @@ def init_chat_db(database):
                 message_type='tool_result',
                 content="",
                 tool_output=message["content"],
+                trace_end = self.ai_response_timestamp
             )
             db.session.add(entry_message)
             db.session.commit()
