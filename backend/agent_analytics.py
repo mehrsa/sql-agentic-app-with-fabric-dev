@@ -43,6 +43,17 @@ def chat_sessions_route():
     print("Handling chat sessions request...")
     return handle_chat_sessions(request)
 
+@app.route('/api/chat/history/<session_id>', methods=['GET'])
+def get_chat_history(session_id):
+    """New endpoint to retrieve chat history for a session."""
+    try:
+        # Use the ChatHistoryManager to get the history
+        chat_manager = ChatHistoryManager(session_id=session_id)
+        history = chat_manager.get_conversation_history()
+        return jsonify(history)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/admin/clear-chat-history', methods=['DELETE'])
 def clear_chat_route():
     return clear_chat_history()

@@ -107,7 +107,7 @@ def init_chat_db(database):
     
         finish_reason = db.Column(db.String(255))
         response_time_ms = db.Column(db.Integer)
-        trace_end = db.Column(db.DateTime)
+        trace_end = db.Column(db.DateTime, default=datetime.now())
 
         def to_dict(self):
             return to_dict_helper(self)
@@ -134,7 +134,6 @@ def init_chat_db(database):
         def add_trace_messages(self, serialized_messages: str, 
                                trace_duration: int):
             """Add all messages in a trace to the chat history"""
-            self.ai_response_timestamp= datetime.now()
             trace_id = str(uuid.uuid4())
             message_list= _to_json_primitive(serialized_messages)
             print("New trace_id generated. Adding all messages for trace_id:", trace_id)
@@ -144,9 +143,9 @@ def init_chat_db(database):
                     _ = self.add_human_message(msg, trace_id)
                 if msg['type'] == 'ai':
                     print("Adding AI message to chat history")
-                    if msg["response_metadata"].get("finish_reason") != "tool_calls":
+                    if msg.get("response_metadata", {}).get("finish_reason") != "tool_calls":
                         _ = self.add_ai_message(msg, trace_id, trace_duration)
-                    elif msg["response_metadata"].get("finish_reason") == "tool_calls":
+                    elif msg.get("response_metadata", {}).get("finish_reason") == "tool_calls":
                         tool_call_dict = self.add_tool_call_message(msg, trace_id)
                 if msg['type'] == "tool":
                     print("Adding tool message to chat history")
@@ -161,10 +160,9 @@ def init_chat_db(database):
                 session_id=self.session_id,
                 user_id=self.user_id,
                 trace_id=trace_id,
-                message_id = message["id"],
+                message_id = str(uuid.uuid4()),
                 message_type="human",
                 content=message['content'],
-                trace_end = self.ai_response_timestamp
             )
             db.session.add(entry_message)
             db.session.commit()
@@ -173,7 +171,9 @@ def init_chat_db(database):
 
         def add_ai_message(self, message: dict, trace_id: str, trace_duration: int):
             """Add the AI agent message to chat history"""
-            agent_id = db.session.query(AgentDefinition.agent_id).filter_by(name=message["name"]).scalar()
+            agent_id = None
+            if "name" in message:
+                agent_id = db.session.query(AgentDefinition.agent_id).filter_by(name=message["name"]).scalar()
             entry_message = ChatHistory(
                 session_id=self.session_id,
                 user_id=self.user_id,
@@ -182,14 +182,13 @@ def init_chat_db(database):
                 trace_id=trace_id,
                 message_type="ai",
                 content=message["content"],
-                total_tokens=message["response_metadata"].get("token_usage")['total_tokens'],
-                completion_tokens=message["response_metadata"].get("token_usage")['completion_tokens'],
-                prompt_tokens=message["response_metadata"].get("token_usage")['prompt_tokens'],
-                model_name=message["response_metadata"].get('model_name'),
-                content_filter_results=message["response_metadata"].get("prompt_filter_results")[0].get("content_filter_results"),
-                finish_reason=message["response_metadata"].get("finish_reason"),
+                total_tokens=message.get("response_metadata", {}).get("token_usage", {}).get('total_tokens'),
+                completion_tokens=message.get("response_metadata", {}).get("token_usage", {}).get('completion_tokens'),
+                prompt_tokens=message.get("response_metadata", {}).get("token_usage", {}).get('prompt_tokens'),
+                model_name=message.get("response_metadata", {}).get('model_name'),
+                content_filter_results=message.get("response_metadata", {}).get("prompt_filter_results", [{}])[0].get("content_filter_results"),
+                finish_reason=message.get("response_metadata", {}).get("finish_reason"),
                 response_time_ms=trace_duration,
-                trace_end = self.ai_response_timestamp
             )
             db.session.add(entry_message)
             db.session.commit()
@@ -198,8 +197,10 @@ def init_chat_db(database):
 
         def add_tool_call_message(self, message: dict, trace_id: str):
             """Log a tool call"""
-            agent_id = db.session.query(AgentDefinition.agent_id).filter_by(name=message["name"]).scalar()
-            tool_name = message["additional_kwargs"].get('tool_calls')[0].get('function')["name"]
+            agent_id = None
+            if "name" in message:
+                agent_id = db.session.query(AgentDefinition.agent_id).filter_by(name=message["name"]).scalar()
+            tool_name = message.get("additional_kwargs", {}).get('tool_calls', [{}])[0].get('function', {}).get("name")
             tool_id = db.session.query(ToolDefinition.tool_id).filter_by(name=tool_name).scalar()
 
             entry_message = ChatHistory(
@@ -210,24 +211,23 @@ def init_chat_db(database):
                 message_id = message["id"],
                 message_type='tool_call',
                 tool_id = tool_id,
-                tool_call_id=message["additional_kwargs"].get('tool_calls')[0].get('id'),
+                tool_call_id=message.get("additional_kwargs", {}).get('tool_calls', [{}])[0].get('id'),
                 tool_name=tool_name,
-                total_tokens=message["response_metadata"].get("token_usage")['total_tokens'],
-                completion_tokens=message["response_metadata"].get("token_usage")['completion_tokens'],
-                prompt_tokens=message["response_metadata"].get("token_usage")['prompt_tokens'],
-                tool_input=message["additional_kwargs"].get('tool_calls')[0].get('function')["arguments"],
-                model_name=message["response_metadata"].get('model_name'),
-                content_filter_results=message["response_metadata"].get("prompt_filter_results")[0].get("content_filter_results"),
-                finish_reason=message["response_metadata"].get("finish_reason"),
-                trace_end = self.ai_response_timestamp
+                total_tokens=message.get("response_metadata", {}).get("token_usage", {}).get('total_tokens'),
+                completion_tokens=message.get("response_metadata", {}).get("token_usage", {}).get('completion_tokens'),
+                prompt_tokens=message.get("response_metadata", {}).get("token_usage", {}).get('prompt_tokens'),
+                tool_input=message.get("additional_kwargs", {}).get('tool_calls', [{}])[0].get('function', {}).get("arguments"),
+                model_name=message.get("response_metadata", {}).get('model_name'),
+                content_filter_results=message.get("response_metadata", {}).get("prompt_filter_results", [{}])[0].get("content_filter_results"),
+                finish_reason=message.get("response_metadata", {}).get("finish_reason"),
             )
             db.session.add(entry_message)
             db.session.commit()
             print("Tool call message added to chat history:", message["id"])
-            return {"tool_call_id": message["additional_kwargs"].get('tool_calls')[0].get('id'),
+            return {"tool_call_id": message.get("additional_kwargs", {}).get('tool_calls', [{}])[0].get('id'),
                     "tool_id": tool_id, "tool_name": tool_name,
-                    "tool_input": message["additional_kwargs"].get('tool_calls')[0].get('function')["arguments"],
-                    "total_tokens": message["response_metadata"].get("token_usage")['total_tokens']}
+                    "tool_input": message.get("additional_kwargs", {}).get('tool_calls', [{}])[0].get('function', {}).get("arguments"),
+                    "total_tokens": message.get("response_metadata", {}).get("token_usage", {}).get('total_tokens')}
 
         def add_tool_result_message(self, message: dict, trace_id: str):
             """Log a tool result"""
@@ -244,7 +244,6 @@ def init_chat_db(database):
                 message_type='tool_result',
                 content="",
                 tool_output=message["content"],
-                trace_end = self.ai_response_timestamp
             )
             db.session.add(entry_message)
             db.session.commit()
@@ -283,11 +282,12 @@ def init_chat_db(database):
 
         def get_conversation_history(self, limit: int = 50):
             """Retrieve conversation history for this session"""
-            messages = ChatHistory.query.filter_by(
+            messages = db.session.query(ChatHistory.trace_id, ChatHistory.message_type, ChatHistory.content, ChatHistory.trace_end).filter_by(
                 session_id=self.session_id
             ).order_by(ChatHistory.trace_end.desc()).limit(limit).all()
             
-            return [msg.to_dict() for msg in reversed(messages)]
+            # Note: messages will be tuples, not model objects, so you'll need to handle differently
+            return [{"trace_id": msg[0], "message_type": msg[1], "content": msg[2], "trace_end": msg[3]} for msg in reversed(messages)]
 
     # Make classes available globally in this module
     globals()['ChatHistory'] = ChatHistory
