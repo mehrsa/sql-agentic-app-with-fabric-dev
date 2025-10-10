@@ -44,6 +44,7 @@ Through a hands-on interface, users can see the practical difference between wri
 - An [Azure OpenAI API Key](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
 - ODBC Driver for SQL Server 18
 - Recommend VSCode as tested in VS Code only
+- This demo runs currently on a Windows Machine as it support ActiveDirectoryInteractive
 
 ---
 
@@ -54,31 +55,55 @@ git clone https://github.com/mehrsa/Banking_App_SQL_with_DataModel
 cd Banking_App_SQL
 ```
 
-### 🗄️ 2. Set Up the Database
+### 🔑 2. Configure Environment Variables
+Before running the application, you need to configure your environment variables. This file stores all the secret keys and connection strings your application needs to connect to Azure and Microsoft Fabric.
+
+Rename the sample file: In the backend directory, find the file named **.env.sample** and rename it to **.env**.
+
+Edit the variables: Open the new .env file and fill in the values for the following variables:
+
+#### Microsoft Fabric & Database
+You can use the same endpoint to store both your applications logs and operational data.
+
+FABRIC_SQL_CONNECTION_URL: This is the connection string for the Fabric SQL warehouse that will store the application's operational data (e.g., chat history). You can find this in your Fabric workspace by navigating to the SQL-endpoint, clicking the "..." menu, and selecting "Copy SQL connection string."
+
+FABRIC_SQL_CONNECTION_URL_BANK_DATA: This is the connection string for the database containing the sample customer banking data.
+
+#### Azure Entra ID
+AZURE_ENTRA_ID: Your Azure Entra ID (also known as the Directory ID).
+
+AZURE_TENANT_ID: Your Azure Tenant ID. 
+
+You can find both of these values in the Azure Portal by navigating to Microsoft Entra ID and looking at the Overview page.
+
+#### Azure OpenAI Service
+AZURE_OPENAI_KEY: Your API key for the Azure OpenAI service. You can find this in the Azure Portal by navigating to your Azure OpenAI resource and selecting Keys and Endpoint.
+
+AZURE_OPENAI_ENDPOINT: The endpoint URL for your Azure OpenAI service. This is found on the same Keys and Endpoint page in the Azure Portal.
+
+AZURE_OPENAI_DEPLOYMENT: The name of your chat model deployment (e.g., "gpt-5-mini"). This is the custom name you gave the model when you deployed it in Azure OpenAI Studio.
+
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT: The name of your embedding model deployment (e.g., "text-embedding-ada-002").
+
+### 🗄️ 3. Set Up the Database
 
 a. Create a database called **customer_banking_data**.The schema.sql file in the **backend** repository contains all the necessary T-SQL commands to create the required tables (users, accounts, transactions) and populate them with sample data.
 
 b. Create another SQL database in Fabric called **banking_app** for storing the agenitc operational data. Use the **agent_data_model.sql** to initialize the required tables for the agentic data model.
 
-Remember to grab the connection strings and put them in appropriate variables in .env for secure connection.
-
-
-
-### ⚙️ 3. Configure the Backend (Flask API)
+### ⚙️ 4. Configure the Backend (Flask API)
 
 ```bash
 cd backend
 python3 -m venv venv
-source .\venv\Scripts\activate # (on Windows)
+.\venv\Scripts\activate # (on Windows)
 pip install -r requirements.txt
 ```
-
-rename the sample env file in `backend/` directory called .**env.sample** to **.env**, and populate its variables with your own 
 
 
 ---
 
-### 💻 4. Configure the Frontend (React + Vite)
+### 💻 5. Configure the Frontend (React + Vite)
 
 From the root project directory:
 
@@ -88,7 +113,7 @@ npm install
 
 ---
 
-### ▶️ 5. Run Jupyter Notebook to create embeddings from the PDF Document
+### ▶️ 6. Run Jupyter Notebook to create embeddings from the PDF Document
 
 You need to ingest embeddings from the PDF in the SQL Database
 

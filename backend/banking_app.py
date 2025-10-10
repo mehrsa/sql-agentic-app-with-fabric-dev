@@ -17,8 +17,6 @@ from langchain_sqlserver import SQLServer_VectorStore
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 from langgraph.store.memory import InMemoryStore
 
-
-
 from shared.db_connect import fabricsql_connection_bank_db
 from shared.utils import get_user_id
 import requests  # For calling analytics service
@@ -52,7 +50,7 @@ else:
         azure_endpoint=AZURE_OPENAI_ENDPOINT,
         api_version="2024-10-21",
         api_key=AZURE_OPENAI_KEY,
-        azure_deployment="gpt-4.1"
+        azure_deployment=AZURE_OPENAI_DEPLOYMENT 
     )
     embeddings_client = AzureOpenAIEmbeddings(
         azure_deployment=AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
