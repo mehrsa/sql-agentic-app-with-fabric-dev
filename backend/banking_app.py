@@ -17,8 +17,6 @@ from langchain_sqlserver import SQLServer_VectorStore
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 from langgraph.store.memory import InMemoryStore
 
-
-
 from shared.db_connect import fabricsql_connection_bank_db
 from shared.utils import get_user_id
 import requests  # For calling analytics service
