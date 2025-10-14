@@ -69,7 +69,6 @@ def init_chat_db(database):
         __tablename__ = 'tool_usage'
         tool_call_id = db.Column(db.String(255), primary_key=True, default=lambda: f"tool_{uuid.uuid4()}")
         session_id = db.Column(db.String(255), nullable=False)
-        message_id = db.Column(db.String(255), db.ForeignKey('chat_history.message_id'))
         trace_id = db.Column(db.String(255), db.ForeignKey('chat_history.trace_id'))
         tool_id = db.Column(db.String(255), db.ForeignKey('tool_definitions.tool_id'), nullable=False)
         tool_name = db.Column(db.String(255), nullable=False)
@@ -208,7 +207,6 @@ def init_chat_db(database):
                 user_id=self.user_id,
                 agent_id=agent_id,
                 trace_id=trace_id,
-                message_id = message["id"],
                 message_type='tool_call',
                 tool_id = tool_id,
                 tool_call_id=message.get("additional_kwargs", {}).get('tool_calls', [{}])[0].get('id'),
