@@ -6,7 +6,8 @@ CREATE TABLE chat_sessions (
     user_id NVARCHAR(255) NOT NULL,
     title NVARCHAR(500),
     created_at DATETIME2 DEFAULT GETUTCDATE(),
-    updated_at DATETIME2 DEFAULT GETUTCDATE()
+    updated_at DATETIME2 DEFAULT GETUTCDATE(),
+    duration_seconds AS DATEDIFF(SECOND, created_at, updated_at) PERSISTED
 );
 
 -- 2. Agent Definitions Table 
@@ -57,7 +58,7 @@ CREATE TABLE chat_history (
     tool_name NVARCHAR(255),
     tool_input NVARCHAR(MAX),            -- JSON data for tool input parameters
     tool_output NVARCHAR(MAX),           -- JSON data for tool output/results
-    tool_id NVARCHAR(255),               -- Add tool_id field
+    tool_id NVARCHAR(255)               -- Add tool_id field
 
 );
 
@@ -70,13 +71,15 @@ CREATE TABLE tool_usage (
     tool_id NVARCHAR(255) NOT NULL,      -- Add tool_id field (foreign key to tool_definitions)
     tool_name NVARCHAR(255) NOT NULL,
     tool_input NVARCHAR(MAX) NOT NULL,   -- JSON data for input parameters
-    tool_output NVARCHAR(MAX),           -- JSON data for output/results
-    status NVARCHAR(50) DEFAULT 'pending', -- 'pending', 'success', 'error', 'timeout'
-    tokens_used INT,                     -- Number of tokens consumed
+    tool_output NVARCHAR(MAX),
+    tool_message NVARCHAR(MAX),
+    status NVARCHAR(50),
+    tokens_used INT                     -- Number of tokens consumed
 );
+
 
 -- Foreign Key Constraints
 -- Link chat_history to chat_sessions
-ALTER TABLE chat_history 
-ADD CONSTRAINT FK_chat_history_session 
-FOREIGN KEY (session_id) REFERENCES chat_sessions(session_id);
+-- ALTER TABLE chat_history 
+-- ADD CONSTRAINT FK_chat_history_session 
+-- FOREIGN KEY (session_id) REFERENCES chat_sessions(session_id);
