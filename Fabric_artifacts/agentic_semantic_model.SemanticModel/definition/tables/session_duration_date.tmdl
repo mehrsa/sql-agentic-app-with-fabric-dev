@@ -29,10 +29,12 @@ table session_duration_date
 		sourceProviderType: int
 		lineageTag: 342d10d2-9549-47ab-af04-8211591334f0
 		sourceLineageTag: sess_duration
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: sess_duration
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column user_id
 		dataType: string

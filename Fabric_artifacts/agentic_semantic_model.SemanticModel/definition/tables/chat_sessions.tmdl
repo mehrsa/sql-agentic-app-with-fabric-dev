@@ -2,6 +2,13 @@ table chat_sessions
 	lineageTag: 00977eb2-638e-408e-b7ba-6db683884f10
 	sourceLineageTag: [dbo].[chat_sessions]
 
+	measure high_value_tasks = DISTINCTCOUNT(tool_usage[trace_id])/DISTINCTCOUNT(chat_history[trace_id])
+		lineageTag: 9c9f52eb-d346-4e0c-ac36-88942a8160be
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column session_id
 		dataType: string
 		sourceProviderType: varchar(8000)

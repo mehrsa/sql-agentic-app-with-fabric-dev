@@ -98,7 +98,7 @@ table tool_usage
 		sourceProviderType: int
 		lineageTag: 59cf22f0-fd2b-46c6-80eb-c2d657358552
 		sourceLineageTag: tokens_used
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: tokens_used
 
 		annotation SummarizationSetBy = Automatic

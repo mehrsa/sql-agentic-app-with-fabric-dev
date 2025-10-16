@@ -2,6 +2,12 @@ table chat_history
 	lineageTag: 0ffab876-d0b5-49ce-aa90-774cb47e1dff
 	sourceLineageTag: [dbo].[chat_history]
 
+	measure trace_with_tool = CALCULATE(DISTINCTCOUNT(chat_history[trace_id]), chat_history[message_type] = "tool_call")
+		formatString: 0
+		lineageTag: 663dab2a-32de-4897-8366-7d6b8ac95877
+
+		changedProperty = Name
+
 	column tool_output
 		dataType: string
 		sourceProviderType: varchar(8000)
