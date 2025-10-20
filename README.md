@@ -168,7 +168,7 @@ python launcher.py
 ```
 This will launch two services:
 1. Banking service on: [http://127.0.0.1:5001](http://127.0.0.1:5001)
-2. Agent analytics service on: [http://127.0.0.1:5001](http://127.0.0.1:5002)
+2. Agent analytics service on: [http://127.0.0.1:5002](http://127.0.0.1:5002)
 
 **You will be prompted for your Fabric credentials during this so watch out for window pop ups and in taskbar!**
 
