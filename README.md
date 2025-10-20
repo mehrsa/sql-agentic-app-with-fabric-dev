@@ -4,7 +4,7 @@
 - How SQL-based databases are leveraged across different types of workloads: **OLTP**, **OLAP**, 
 - How agile **AI-driven analysis and insight discovery** can be enabled via prescriptive data models in Fabric.
 
-Through a hands-on interface, users can see the practical difference between writing a new transaction to the database, running analytical queries on historical data, and using natural language to ask an agent to query the database for them.
+Through a hands-on interface, users can see the practical difference between writing a new transaction to the database, running complex analytical queries on historical data, and using natural language to ask an agent to query the database for them.
 
 ---
 
