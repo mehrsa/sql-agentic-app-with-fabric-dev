@@ -144,7 +144,7 @@ You need to ingest embeddings from the PDF in the SQL Database
 
 a. Copy the .env file in the folder **Data_Ingest**.
 b. Run **deactivate** to ensure the previous virtual env is deactivated.
-b. From the folder **Data_Ingest** create a new virtual Python environment:
+c. From the folder **Data_Ingest** create a new virtual Python environment:
 
 ```bash
 python3 -m venv new_env
