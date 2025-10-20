@@ -110,7 +110,7 @@ AZURE_OPENAI_EMBEDDING_DEPLOYMENT: The name of your embedding model deployment (
 
 - In your Fabric workspace, go to the banking_db database. 
 - Click on "New Query" from the top menu
-- In your local repo folder, got to Data_Ingest and Copy content of banking.sql file, paste it in the query tab you opened on Fabric and click on **Run**
+- In your local repo folder, go to Data_Ingest and copy content of banking.sql file, paste it in the query tab you opened on Fabric and click on **Run**
 - Sample data should now be populated in the banking_db tables.
 
 ## Let's Run the app locally!
