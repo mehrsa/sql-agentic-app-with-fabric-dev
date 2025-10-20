@@ -69,7 +69,7 @@ cd sql-agentic-app-on-fabric
 - In Home tab (with Welcome to Fabric title), click on "New workspace" and proceed to create your workspace for this demo.
 
 ### 3. Automatic set up of all required Fabric resources and artifacts 
-To easily set up you Fabric workspace with all required artifacts for this demo, you need to link your Fabric workspace with your repo
+To easily set up your Fabric workspace with all required artifacts for this demo, you need to link your Fabric workspace with your repo
 
 - Go to your workspace and click on "Workspace settings" on top right of the page
 - Go to Git integration tab 
