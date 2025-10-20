@@ -64,7 +64,7 @@ cd sql-agentic-app-on-fabric
 ```
 ### 2. Set up your Fabric account
 
-- If you do not already have access to a Fabric capacity, you can easily enable a Microsoft Fabric trial capacity for free  which will give you free access for 60 days to all features needed for this demo: https://learn.microsoft.com/en-us/fabric/fundamentals/fabric-trial
+- If you do not already have access to a Fabric capacity, you can easily enable a Microsoft Fabric trial capacity for free which will give you free access for 60 days to all features needed for this demo: https://learn.microsoft.com/en-us/fabric/fundamentals/fabric-trial
 
 - In Home tab (with Welcome to Fabric title), click on "New workspace" and proceed to create your workspace for this demo.
 
