@@ -40,12 +40,12 @@ Through a hands-on interface, users can see the practical difference between wri
 
 ---
 
-## 🚀 Getting Started 
 
-### 🔧 Prerequisites
+
+## 🔧 Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or later)
-- [Python](https://www.python.org/) (v3.9 or later)
+- [Python](https://www.python.org/) -- **Must be 3.11.9**
 - A Fabric workspace 
 - An [Azure OpenAI API Key](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
 - ODBC Driver for SQL Server 18
@@ -53,6 +53,7 @@ Through a hands-on interface, users can see the practical difference between wri
 - This demo runs currently on a Windows Machine as it support ActiveDirectoryInteractive
 
 ---
+## Set up required resources
 
 ### 1. Fork and clone the Repository
 - Fork the repo (click the fork button, this will create a copy of the repo under your GitHub account.)
@@ -92,9 +93,10 @@ Edit the variables: Open the new .env file and fill in the values for the follow
 #### Microsoft Fabric SQL Database
 
 
-FABRIC_SQL_CONNECTION_URL: This is the connection string for the Fabric SQL warehouse that will store the application's operational data (e.g., chat history). You can find this in your Fabric workspace by navigating to the SQL-endpoint, clicking the "..." menu, and selecting "Copy SQL connection string."
+FABRIC_SQL_CONNECTION_URL: This is the connection string for the Fabric SQL warehouse that will store **the application's operational data** (e.g., chat history). You can find this in your Fabric workspace by navigating to the SQL-endpoint, clicking the "..." menu, and selecting "Copy SQL connection string."
 
-FABRIC_SQL_CONNECTION_URL_BANK_DATA: This is the connection string for the database containing the sample customer banking data.
+FABRIC_SQL_CONNECTION_URL_BANK_DATA: This is the connection string for the database containing **the sample customer banking data**.  You can find this in your Fabric workspace by navigating to the SQL-endpoint of this database, clicking the "..." menu, and selecting "Copy SQL connection string."
+
 
 
 #### Azure OpenAI Service
@@ -113,7 +115,7 @@ AZURE_OPENAI_EMBEDDING_DEPLOYMENT: The name of your embedding model deployment (
 - In your local repo folder, go to Data_Ingest and copy content of banking.sql file, paste it in the query tab you opened on Fabric and click on **Run**
 - Sample data should now be populated in the banking_db tables.
 
-## Let's Run the app locally!
+## Now follow below steps to run the app locally!
 Now that all requirements are set up, follow below steps to run and test the app:
 
 ### 1. Configure the Backend (Flask API)
