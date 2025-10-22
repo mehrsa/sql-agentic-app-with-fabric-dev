@@ -74,11 +74,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Vector Store Initialization
-server = os.getenv('DB_SERVER')
-database = os.getenv('DB_DATABASE')
-driver = os.getenv('DB_DRIVER', 'ODBC Driver 18 for SQL Server')
-
 connection_string = os.getenv('FABRIC_SQL_CONNECTION_URL_BANK_DATA')
 
 connection_url = f"mssql+pyodbc:///?odbc_connect={connection_string}"
