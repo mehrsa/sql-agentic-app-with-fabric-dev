@@ -45,12 +45,12 @@ Through a hands-on interface, users can see the practical difference between wri
 ## 🔧 Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or later)
-- [Python](https://www.python.org/) -- **Must be 3.11.9**
+- <span style="background-color: yellow">[Python](https://www.python.org/) -- **Must be 3.11.9**</span>
 - A Fabric workspace 
 - An [Azure OpenAI API Key](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
 - ODBC Driver for SQL Server 18
 - Recommend VSCode as tested in VS Code only
-- This demo runs currently on a Windows Machine as it support ActiveDirectoryInteractive
+- This demo <span style="background-color: yellow">runs currently only on a Windows Machine </span>as it support ActiveDirectoryInteractive
 
 ---
 ## Set up required resources
@@ -60,8 +60,8 @@ Through a hands-on interface, users can see the practical difference between wri
 - Clone the forked repo: Navigate to your forked repository on GitHub and click the "Code" button. Copy the URL provided for cloning. Then run below in terminal:
 
 ```bash
-git clone <copied url>
-cd sql-agentic-app-on-fabric  
+git clone <copied url of forked repo>
+cd <sql-agentic-app-with-fabric or main repo folder name if you have changed the name when forking>
 ```
 ### 2. Set up your Fabric account
 
@@ -90,23 +90,21 @@ Rename the sample file: In the backend directory, find the file named **.env.sam
 
 Edit the variables: Open the new .env file and fill in the values for the following variables:
 
-#### Microsoft Fabric SQL Database
+#### -> Microsoft Fabric SQL Databases
+
+FABRIC_SQL_CONNECTION_URL_BANK_DATA: This is the connection string for the database containing **the sample customer banking data**.  You can find this in your Fabric workspace by navigating to the SQL-endpoint of this database, clicking the "settings" -> "Connection strings" -> go to "ODBC" tab and select and copy SQL connection string.
+
+FABRIC_SQL_CONNECTION_URL_AGENTIC: This is the connection string for the Fabric SQL warehouse that will store **the application's operational data** (e.g., chat history). You can find this in your Fabric workspace by navigating to the SQL-endpoint of this database, clicking the "settings" -> "Connection strings" -> go to "ODBC" tab and select and copy SQL connection string.
 
 
-FABRIC_SQL_CONNECTION_URL: This is the connection string for the Fabric SQL warehouse that will store **the application's operational data** (e.g., chat history). You can find this in your Fabric workspace by navigating to the SQL-endpoint, clicking the "..." menu, and selecting "Copy SQL connection string."
+#### -> Azure OpenAI Services
+**AZURE_OPENAI_KEY**: Your API key for the Azure OpenAI service. You can find this in the Azure Portal by navigating to your Azure OpenAI resource and selecting Keys and Endpoint.
 
-FABRIC_SQL_CONNECTION_URL_BANK_DATA: This is the connection string for the database containing **the sample customer banking data**.  You can find this in your Fabric workspace by navigating to the SQL-endpoint of this database, clicking the "..." menu, and selecting "Copy SQL connection string."
+**AZURE_OPENAI_ENDPOINT**: The endpoint URL for your Azure OpenAI service. This is found on the same Keys and Endpoint page in the Azure Portal.
 
+**AZURE_OPENAI_DEPLOYMENT**: The name of your chat model deployment (e.g., "gpt-5-mini"). This is the custom name you gave the model when you deployed it in Azure OpenAI Studio.
 
-
-#### Azure OpenAI Service
-AZURE_OPENAI_KEY: Your API key for the Azure OpenAI service. You can find this in the Azure Portal by navigating to your Azure OpenAI resource and selecting Keys and Endpoint.
-
-AZURE_OPENAI_ENDPOINT: The endpoint URL for your Azure OpenAI service. This is found on the same Keys and Endpoint page in the Azure Portal.
-
-AZURE_OPENAI_DEPLOYMENT: The name of your chat model deployment (e.g., "gpt-5-mini"). This is the custom name you gave the model when you deployed it in Azure OpenAI Studio.
-
-AZURE_OPENAI_EMBEDDING_DEPLOYMENT: The name of your embedding model deployment (e.g., "text-embedding-ada-002").
+**AZURE_OPENAI_EMBEDDING_DEPLOYMENT**: The name of your embedding model deployment (e.g., "text-embedding-ada-002").
 
 ### 5. Populate your database with sample data
 
@@ -115,14 +113,13 @@ AZURE_OPENAI_EMBEDDING_DEPLOYMENT: The name of your embedding model deployment (
 - In your local repo folder, go to Data_Ingest and copy content of banking.sql file, paste it in the query tab you opened on Fabric and click on **Run**
 - Sample data should now be populated in the banking_db tables.
 
-## Now follow below steps to run the app locally!
-Now that all requirements are set up, follow below steps to run and test the app:
+## Follow below steps to run the app locally!
+Now that all resources are set up, follow below steps to run and test the app:
 
-### 1. Configure the Backend (Flask API)
-In your local repo folder 
+### 1. Install Backend Requirements (Flask API)
+In the root project directory run below commands:
 
 ```bash
-cd backend
 python3 -m venv venv
 .\venv\Scripts\activate # (on Windows)
 pip install -r requirements.txt
@@ -144,28 +141,20 @@ npm install
 
 You need to ingest embeddings from the PDF in the SQL Database
 
-a. Copy the .env file in the folder **Data_Ingest**.
-b. Run **deactivate** to ensure the previous virtual env is deactivated.
-c. From the folder **Data_Ingest** create a new virtual Python environment:
-
-```bash
-python3 -m venv new_env
-.\new_venv\Scripts\activate 
-pip install -r requirements.txt
-```
-
-c. Open the Jupyter Python Notebook in the path: Data_Ingest/Documentation ingestion_pdf_Bank_App.ipynb
-
-d. Run all the cells in the notebook
+1.  Copy the .env file in the folder **Data_Ingest**.
+2. Open the Jupyter Python Notebook in the path: Data_Ingest/Documentation ingestion_pdf_Bank_App.ipynb
+3. Ensure the Kernel is pointing to the "venv" virtual environment you created previously
+4. Run all the cells in the notebook (you will be prompted for Fabric username and password so watch out for that pop up!)
 
 ### 4. Run the Application
 
-- Run deactivate again
+Open two terninal windows.
+
 #### Terminal 1: Start Backend
 
+Run below
+
 ```bash
-cd backend
-.\venv\Scripts\activate
 python launcher.py
 ```
 This will launch two services:
@@ -176,7 +165,7 @@ This will launch two services:
 
 #### Terminal 2: Start Frontend
 
-Go to the root of your folder.
+Ensure you are in the root of your folder and run below:
 
 ```bash
 npm run dev
@@ -197,5 +186,5 @@ As you use the app:
 
 ##  Contributing
 
-Contributions are welcome!\
-If you have suggestions for improvements or find any bugs, feel free to [open an issue](https://github.com/Azure-Samples/sql-agentic-app-on-fabric) or submit a pull request.
+Contributions are welcome!
+If you have suggestions for improvements or find any bugs, feel free to [open an issue](https://aka.ms/AgenticAppFabric) or submit a pull request.

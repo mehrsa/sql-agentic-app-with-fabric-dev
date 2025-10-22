@@ -5,6 +5,17 @@ from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
+def fabricsql_connection_bank_db():
+    """Create connection for fabric database."""
+    fabric_conn_str = os.getenv("FABRIC_SQL_CONNECTION_URL_BANK_DATA")
+    return pyodbc.connect(fabric_conn_str)
+
+def fabricsql_connection_agentic_db():
+    """Create connection for fabric database."""
+    fabric_conn_str = os.getenv("FABRIC_SQL_CONNECTION_URL_AGENTIC")
+    return pyodbc.connect(fabric_conn_str)
+
+# below is not used for this demo. But you can use it to connect to an Azure SQL db if needed
 def create_azuresql_connection():
     """Create connection for banking database."""
     credential = DefaultAzureCredential()
@@ -25,12 +36,3 @@ def create_azuresql_connection():
     )
     return pyodbc.connect(conn_str, attrs_before={1256: token_struct})
 
-def fabricsql_connection_bank_db():
-    """Create connection for fabric database."""
-    fabric_conn_str = os.getenv("FABRIC_SQL_CONNECTION_URL_BANK_DATA")
-    return pyodbc.connect(fabric_conn_str)
-
-def fabricsql_connection_agentic_db():
-    """Create connection for fabric database."""
-    fabric_conn_str = os.getenv("FABRIC_SQL_CONNECTION_URL")
-    return pyodbc.connect(fabric_conn_str)
