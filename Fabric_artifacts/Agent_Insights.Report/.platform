@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Agent_Insights"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2d3e8db4-8918-bdae-4af7-f71d3cc8528c"
+  }
+}
