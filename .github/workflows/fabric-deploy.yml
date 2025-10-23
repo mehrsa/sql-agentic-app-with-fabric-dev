@@ -38,7 +38,7 @@ jobs:
         ACCESS_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.access_token')
         
         if [ "$ACCESS_TOKEN" = "null" ] || [ -z "$ACCESS_TOKEN" ]; then
-          echo "❌ Failed to get access token"
+          echo " Failed to get access token"
           exit 1
         fi
         
