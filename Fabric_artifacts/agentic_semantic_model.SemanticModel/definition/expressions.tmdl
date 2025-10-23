@@ -1,4 +1,3 @@
-// Fabric_artifacts/agentic_semantic_model.SemanticModel/definition/expressions.template.tmdl
 expression DatabaseQuery =
     let
         database = Sql.Database("{{SERVER_NAME}}", "{{DATABASE_ID}}")
