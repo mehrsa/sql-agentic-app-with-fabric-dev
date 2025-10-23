@@ -1,8 +1,8 @@
-# .github/workflows/fabric-deploy.yml
+# .github/workflows/fabric-deploy.yml new
 name: Deploy Fabric Semantic Model (Dev)
 
 on:
-  pull:
+  push:
     branches: [main, test-1]
   workflow_dispatch:
 
