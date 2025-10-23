@@ -1,0 +1,87 @@
+# .github/workflows/fabric-deploy.yml
+name: Deploy Fabric Semantic Model (Dev)
+
+on:
+  push:
+    branches: [main, test-1]
+  workflow_dispatch:
+
+env:
+  DATABASE_LOGICAL_ID: 'c91da76f-8f7a-ab41-4832-b16b4022af76'
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Update Fabric Connection for Dev
+      run: |
+        echo "Configuring for DEV environment"
+        
+        # Get workspace ID from secrets
+        WORKSPACE_ID="${{ secrets.FABRIC_WORKSPACE_ID_DEV }}"
+        
+        # Construct server name for dev environment
+        SERVER_NAME="${WORKSPACE_ID}-sak6yqbidmdelos3ni6oahljhe.datawarehouse.fabric.microsoft.com"
+        
+        echo "Workspace ID: $WORKSPACE_ID"
+        echo "Server Name: $SERVER_NAME" 
+        echo "Database ID: $DATABASE_LOGICAL_ID"
+        
+        # Update expressions.tmdl with dev connection
+        cat > Fabric_artifacts/agentic_semantic_model.SemanticModel/definition/expressions.tmdl << EOF
+        expression DatabaseQuery =
+            let
+                database = Sql.Database("$SERVER_NAME", "$DATABASE_LOGICAL_ID")
+            in
+                database
+            lineageTag: 6a0481fe-610a-40d9-a67d-1874dc520a08
+            annotation PBI_IncludeFutureArtifacts = False
+        EOF
+        
+        echo "✅ Updated expressions.tmdl for DEV environment"
+        echo "📄 File content:"
+        cat Fabric_artifacts/agentic_semantic_model.SemanticModel/definition/expressions.tmdl
+    
+    - name: Validate Fabric Artifacts
+      run: |
+        echo "🔍 Validating Fabric artifacts..."
+        
+        # Check expressions.tmdl exists and has content
+        if [ ! -f "Fabric_artifacts/agentic_semantic_model.SemanticModel/definition/expressions.tmdl" ]; then
+          echo "❌ Error: expressions.tmdl not found"
+          exit 1
+        fi
+        
+        # Check if SQL Database platform file exists
+        if [ ! -f "Fabric_artifacts/agentic_app_db.SQLDatabase/.platform" ]; then
+          echo "❌ Error: SQL Database platform file not found"
+          exit 1
+        fi
+        
+        echo "✅ Fabric artifacts validation completed"
+    
+    - name: Display Deployment Summary
+      run: |
+        echo "🚀 DEV Deployment Summary"
+        echo "========================"
+        echo "Environment: DEV"
+        echo "Workspace ID: ${{ secrets.FABRIC_WORKSPACE_ID_DEV }}"
+        echo "Database Logical ID: $DATABASE_LOGICAL_ID"
+        echo ""
+        echo "📁 Updated Files:"
+        echo "  - expressions.tmdl (with dynamic server connection)"
+        echo ""
+        echo "🔗 Next Steps:"
+        echo "  - Deploy to Fabric workspace using Git integration"
+        echo "  - Or use Fabric REST API for automated deployment"
+        
+    - name: Create Deployment Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: fabric-artifacts-dev
+        path: Fabric_artifacts/
+        retention-days: 7

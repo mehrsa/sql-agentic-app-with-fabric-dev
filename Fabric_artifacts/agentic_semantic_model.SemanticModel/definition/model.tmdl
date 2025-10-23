@@ -13,9 +13,12 @@ annotation PBI_QueryOrder = ["DatabaseQuery"]
 
 annotation PBI_ProTooling = ["WebModelingEdit"]
 
+ref table ContentIssues
+ref table UserAsks
 ref table chat_history
 ref table agent_definitions
 ref table tool_usage
 ref table tool_definitions
 ref table chat_sessions
+ref table session_duration_date
 
