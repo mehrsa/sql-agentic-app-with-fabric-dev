@@ -2,7 +2,7 @@ expression DatabaseQuery =
     let
         // Use relative workspace connections when possible
         WorkspaceId = Fabric.Workspace(),
-        DatabaseName = "your-database-name", // Use logical name instead of GUID
+        DatabaseName = "agentic_lake", // Use logical name instead of GUID
         database = Sql.Database(
             Text.Combine({WorkspaceId, ".datawarehouse.fabric.microsoft.com"}), 
             DatabaseName
