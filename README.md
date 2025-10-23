@@ -70,19 +70,54 @@ cd <sql-agentic-app-with-fabric or main repo folder name if you have changed the
 - In Home tab (with Welcome to Fabric title), click on "New workspace" and proceed to create your workspace for this demo.
 
 ### 3. Automatic set up of all required Fabric resources and artifacts 
-To easily set up your Fabric workspace with all required artifacts for this demo, you need to link your Fabric workspace with your repo
+To easily set up your Fabric workspace with all required artifacts for this demo, you need to link your Fabric workspace with your repo. And pull artifacts in two steps:
 
-- Go to your workspace and click on "Workspace settings" on top right of the page
-- Go to Git integration tab 
-- Click on GitHub tile and click on "Add account"
-- Choose a name, paste your fine grained personal access token for the repo you just forked (don't know how to generate this? there are a lot of tutorials online such as: https://thetechdarts.com/generate-personal-access-token-in-github/)
-- paste repo url (forked to your account)
-- After connecting to the repo, you will see the option in the same tab to provide the branch and folder name. Branch should be "main" and folder name should be "Fabric_artifacts"
-- Click on "Connect and Sync" 
-- Now the process of pulling all Fabric artifacts from the repo to your workspace starts. This may take a few minutes
+1. Pull data artifacts only
+2. Pull analytics artifacts
+
+You only need to do below steps one time.
+
+#### Step 1: Set up your databases
+
+1. Go to your workspace and click on "Workspace settings" on top right of the page
+2. Go to Git integration tab -> Click on GitHub tile and click on "Add account"
+3. Choose a name, paste your fine grained personal access token for the repo you just forked (don't know how to generate this? there are a lot of tutorials online such as: https://thetechdarts.com/generate-personal-access-token-in-github/)
+4. paste the forked repo url and connect
+5. After connecting to the repo, you will see the option in the same tab to provide the branch and folder name. Branch should be "main" and folder name should be "Fabric_database_artifacts"
+    - Click on "Connect and Sync" 
+    - Now the process of pulling all Fabric artifacts from the repo to your workspace starts. This may take a few minutes. Wait untill all is done (you will see green check marks)
+ 
+##### Populate your database with sample data
+
+**banking data**
+- In your Fabric workspace, go to the banking_db database. 
+- Click on "New Query" from the top menu
+- In your local repo folder, go to Data_Ingest and copy content of banking.sql file, paste it in the query tab you opened on Fabric and click on **Run**
+- Sample data should now be populated in the banking_db tables.
+
+**Create required views**
+- go to the SQL analytics endpoint of your agentic_lake
+- go to go to Data_Ingest and run all 3 queries that you see in file views.sql
+
+#### Step 2
+- Final step is to deploy the semantic model, data agent and visualizations!
+1. You need to obtain two parameter values:
+    - **SQL server connection string**: First, go to the **SQL analytics endpoint** of the agentic_lake, go to settings -> SQL endpoint -> copy value under SQL connection string  (paste it somewhere to keep it for now)
+    - **Lakehouse analytics GUID**: Look at the address bar, you should see something like this: *https://app.fabric.microsoft.com/groups/[first string]/mirroredwarehouses/**[second string]**?experience=fabric-developer*
+        - copy the value you see in position of second string. 
+2. Now go to: Fabric_analytics_artifacts\agentic_semantic_model.SemanticModel\definition, open the file called **expressions.tmdl** and replace the values with the ones you just retrieved. Save the file and push it to your repo. 
+
+3. Now go back to Git integration tab, disconnect the repo and reconnect it using the same branch (main) but with this folder name: **Fabric_analytics_artifacts** 
+
+4. Choose sync content from Git to workspace. 
+5. This will start to set everything up and may take a few minutes 
 
 
-### 4. Configure Environment Variables
+
+
+## Follow below steps to run the app locally!
+Now that all resources are set up, follow below steps to run and test the app:
+### 1. Configure Environment Variables
 
 Before running the application, you need to configure your environment variables. This file stores all the secret keys and connection strings your application needs to connect to Azure and Microsoft Fabric resources.
 
@@ -105,18 +140,7 @@ FABRIC_SQL_CONNECTION_URL_AGENTIC: This is the connection string for the Fabric 
 **AZURE_OPENAI_DEPLOYMENT**: The name of your chat model deployment (e.g., "gpt-5-mini"). This is the custom name you gave the model when you deployed it in Azure OpenAI Studio.
 
 **AZURE_OPENAI_EMBEDDING_DEPLOYMENT**: The name of your embedding model deployment (e.g., "text-embedding-ada-002").
-
-### 5. Populate your database with sample data
-
-- In your Fabric workspace, go to the banking_db database. 
-- Click on "New Query" from the top menu
-- In your local repo folder, go to Data_Ingest and copy content of banking.sql file, paste it in the query tab you opened on Fabric and click on **Run**
-- Sample data should now be populated in the banking_db tables.
-
-## Follow below steps to run the app locally!
-Now that all resources are set up, follow below steps to run and test the app:
-
-### 1. Install Backend Requirements (Flask API)
+### 2. Install Backend Requirements (Flask API)
 In the root project directory run below commands:
 
 ```bash
@@ -127,7 +151,7 @@ pip install -r requirements.txt
 
 ---
 
-### 2. Configure the Frontend (React + Vite)
+### 3. Configure the Frontend (React + Vite)
 
 From the root project directory:
 
@@ -137,7 +161,7 @@ npm install
 
 ---
 
-### 3. Run Jupyter Notebook to create embeddings from the PDF Document
+### 4. Run Jupyter Notebook to create embeddings from the PDF Document
 
 You need to ingest embeddings from the PDF in the SQL Database
 
@@ -146,7 +170,7 @@ You need to ingest embeddings from the PDF in the SQL Database
 3. Ensure the Kernel is pointing to the "venv" virtual environment you created previously
 4. Run all the cells in the notebook (you will be prompted for Fabric username and password so watch out for that pop up!)
 
-### 4. Run the Application
+### 5. Run the Application
 
 Open two terninal windows.
 
@@ -174,7 +198,7 @@ npm run dev
 Frontend will run on: [http://localhost:5173](http://localhost:5173)
 
 ---
-
+ 
 ## Explore Agentic Analytics
 
 As you use the app:
