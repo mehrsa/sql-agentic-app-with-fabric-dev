@@ -82,7 +82,7 @@ jobs:
           SERVER_NAME="${WORKSPACE_ID}.datawarehouse.fabric.microsoft.com"
         fi
         
-        # Test different server name patterns if needed
+        # Test different server name patterns if needed...
         echo "🧪 Testing server name patterns..."
         echo "Pattern 1: ${WORKSPACE_ID}.datawarehouse.fabric.microsoft.com"
         echo "Pattern 2: ${WORKSPACE_ID}-cluster.datawarehouse.fabric.microsoft.com"
