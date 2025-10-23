@@ -2,7 +2,7 @@
 name: Deploy Fabric Semantic Model (Dev)
 
 on:
-  push:
+  pull:
     branches: [main, test-1]
   workflow_dispatch:
 
