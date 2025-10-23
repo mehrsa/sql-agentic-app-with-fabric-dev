@@ -16,90 +16,25 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
       
-    - name: Get Fabric Workspace Connection Info
+    - name: Update Fabric Connection for Dev
       run: |
-        echo "🔍 Discovering Fabric workspace connection details..."
+        echo "Configuring for DEV environment"
         
         # Get workspace ID from secrets
         WORKSPACE_ID="${{ secrets.FABRIC_WORKSPACE_ID_DEV }}"
         
-        # Get access token for Fabric API
-        TOKEN_RESPONSE=$(curl -s -X POST \
-          "https://login.microsoftonline.com/${{ secrets.TENANT_ID }}/oauth2/v2.0/token" \
-          -H "Content-Type: application/x-www-form-urlencoded" \
-          -d "client_id=${{ secrets.FABRIC_CLIENT_ID }}" \
-          -d "client_secret=${{ secrets.FABRIC_CLIENT_SECRET }}" \
-          -d "scope=https://analysis.windows.net/powerbi/api/.default" \
-          -d "grant_type=client_credentials")
+        # Construct server name for dev environment  
+        SERVER_NAME="${WORKSPACE_ID}.datawarehouse.fabric.microsoft.com"
         
-        ACCESS_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.access_token')
-        
-        if [ "$ACCESS_TOKEN" = "null" ]; then
-          echo "❌ Failed to get access token"
-          echo "Response: $TOKEN_RESPONSE"
-          exit 1
-        fi
-        
-        echo "✅ Got access token"
-        
-        # Get workspace details
-        WORKSPACE_RESPONSE=$(curl -s -X GET \
-          "https://api.fabric.microsoft.com/v1/workspaces/$WORKSPACE_ID" \
-          -H "Authorization: Bearer $ACCESS_TOKEN" \
-          -H "Content-Type: application/json")
-        
-        echo "📋 Workspace response: $WORKSPACE_RESPONSE"
-        
-        # Extract capacity info which contains the cluster/server details
-        CAPACITY_ID=$(echo $WORKSPACE_RESPONSE | jq -r '.capacityId // empty')
-        
-        if [ -n "$CAPACITY_ID" ]; then
-          echo "✅ Found capacity ID: $CAPACITY_ID"
-          
-          # Get capacity details to find the cluster URI
-          CAPACITY_RESPONSE=$(curl -s -X GET \
-            "https://api.fabric.microsoft.com/v1/capacities/$CAPACITY_ID" \
-            -H "Authorization: Bearer $ACCESS_TOKEN" \
-            -H "Content-Type: application/json")
-          
-          echo "📋 Capacity response: $CAPACITY_RESPONSE"
-          
-          # Extract the cluster URI or region info
-          REGION=$(echo $CAPACITY_RESPONSE | jq -r '.region // "westeurope"')
-          
-          # Construct server name based on discovered info
-          # Common patterns in Fabric:
-          # Option A: {workspaceId}-{clusterSuffix}.datawarehouse.fabric.microsoft.com
-          # Option B: {region}-{workspaceId}.datawarehouse.fabric.microsoft.com
-          # Option C: {workspaceId}.{region}.datawarehouse.fabric.microsoft.com
-          
-          SERVER_NAME="${WORKSPACE_ID}.datawarehouse.fabric.microsoft.com"
-          
-          echo "🌐 Constructed server name: $SERVER_NAME"
-        else
-          echo "⚠️  Could not determine capacity, using workspace-based pattern"
-          SERVER_NAME="${WORKSPACE_ID}.datawarehouse.fabric.microsoft.com"
-        fi
-        
-        # Test different server name patterns if needed
-        echo "🧪 Testing server name patterns..."
-        echo "Pattern 1: ${WORKSPACE_ID}.datawarehouse.fabric.microsoft.com"
-        echo "Pattern 2: ${WORKSPACE_ID}-cluster.datawarehouse.fabric.microsoft.com"
-        echo "Pattern 3: ${WORKSPACE_ID}.${REGION}.datawarehouse.fabric.microsoft.com"
-        
-        # Store the final server name
-        echo "SERVER_NAME=$SERVER_NAME" >> $GITHUB_ENV
-        echo "WORKSPACE_ID=$WORKSPACE_ID" >> $GITHUB_ENV
-    
-    - name: Update Fabric Connection
-      run: |
-        echo "🔧 Updating expressions.tmdl with discovered connection..."
         echo "Workspace ID: $WORKSPACE_ID"
-        echo "Server Name: $SERVER_NAME"
+        echo "Server Name: $SERVER_NAME" 
         echo "Database ID: $DATABASE_LOGICAL_ID"
         
-        # Update expressions.tmdl with discovered connection
+        # Update expressions.tmdl with dev connection
         cat > Fabric_artifacts/agentic_semantic_model.SemanticModel/definition/expressions.tmdl << EOF
         expression DatabaseQuery =
             let
@@ -110,17 +45,70 @@ jobs:
             annotation PBI_IncludeFutureArtifacts = False
         EOF
         
-        echo "✅ Updated expressions.tmdl"
+        echo "✅ Updated expressions.tmdl for DEV environment"
         echo "📄 File content:"
         cat Fabric_artifacts/agentic_semantic_model.SemanticModel/definition/expressions.tmdl
-    
-    - name: Validate Connection (Optional)
+
+    - name: Commit Changes Back to Repository
       run: |
-        echo "🔍 Connection validation would go here"
-        echo "Server: $SERVER_NAME"
-        echo "Database: $DATABASE_LOGICAL_ID"
-        # Add actual connection test if needed
+        # Configure git
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Check if there are changes
+        if git diff --quiet; then
+          echo "📝 No changes to commit"
+        else
+          echo "📝 Committing changes to expressions.tmdl"
+          
+          # Add the modified file
+          git add Fabric_artifacts/agentic_semantic_model.SemanticModel/definition/expressions.tmdl
+          
+          # Commit with descriptive message
+          git commit -m "🔧 Auto-update Fabric connection for DEV environment
+          
+          - Updated server name to: ${WORKSPACE_ID}.datawarehouse.fabric.microsoft.com
+          - Database ID: $DATABASE_LOGICAL_ID
+          - Triggered by: ${{ github.event_name }}
+          - Commit: ${{ github.sha }}"
+          
+          # Push changes back to the repository
+          git push origin ${{ github.ref_name }}
+          
+          echo "✅ Changes committed and pushed to repository"
+        fi
+
+    - name: Validate Fabric Artifacts
+      run: |
+        echo "🔍 Validating Fabric artifacts..."
+        
+        if [ ! -f "Fabric_artifacts/agentic_semantic_model.SemanticModel/definition/expressions.tmdl" ]; then
+          echo "❌ Error: expressions.tmdl not found"
+          exit 1
+        fi
+        
+        if [ ! -f "Fabric_artifacts/agentic_app_db.SQLDatabase/.platform" ]; then
+          echo "❌ Error: SQL Database platform file not found"
+          exit 1
+        fi
+        
+        echo "✅ Fabric artifacts validation completed"
     
+    - name: Display Deployment Summary
+      run: |
+        echo "🚀 DEV Deployment Summary"
+        echo "========================"
+        echo "Environment: DEV"
+        echo "Workspace ID: ${{ secrets.FABRIC_WORKSPACE_ID_DEV }}"
+        echo "Database Logical ID: $DATABASE_LOGICAL_ID"
+        echo ""
+        echo "📁 Updated Files:"
+        echo "  - expressions.tmdl (committed to repository)"
+        echo ""
+        echo "🔗 Next Steps:"
+        echo "  - Changes are now in your repository"
+        echo "  - Deploy to Fabric workspace using Git integration"
+        
     - name: Create Deployment Artifact
       uses: actions/upload-artifact@v4
       with:
