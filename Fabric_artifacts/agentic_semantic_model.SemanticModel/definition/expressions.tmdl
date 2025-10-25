@@ -1,6 +1,6 @@
 expression DatabaseQuery =
 		let
-		    database = Sql.Database("ENTER SQL Analytics Endpoint of agentic_app_db", "Object of the SQL analytics endpoint")
+		    database = Sql.Database("xpkymsttihxelp6vuo2w5ywt2u-dd2uqflqq5turfwidabgckku2i.datawarehouse.fabric.microsoft.com", "f58e1244-da15-42dc-85e3-b3ddb05aa20f")
 		in
 		    database
 	lineageTag: 6a0481fe-610a-40d9-a67d-1874dc520a08
