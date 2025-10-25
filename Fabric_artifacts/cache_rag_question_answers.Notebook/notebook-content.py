@@ -6,18 +6,6 @@
 # META   "kernel_info": {
 # META     "name": "jupyter",
 # META     "jupyter_kernel_name": "python3.11"
-# META   },
-# META   "dependencies": {
-# META     "lakehouse": {
-# META       "default_lakehouse": "f2b7ab5c-c086-435d-81a5-0554ccb3cb90",
-# META       "default_lakehouse_name": "agentic_lake",
-# META       "default_lakehouse_workspace_id": "d1a728f8-f435-46a7-9286-b10e12e92119",
-# META       "known_lakehouses": [
-# META         {
-# META           "id": "f2b7ab5c-c086-435d-81a5-0554ccb3cb90"
-# META         }
-# META       ]
-# META     }
 # META   }
 # META }
 

@@ -74,7 +74,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-connection_string = os.getenv('FABRIC_SQL_CONNECTION_URL_BANK_DATA')
+connection_string = os.getenv('FABRIC_SQL_CONNECTION_URL_AGENTIC')
 
 connection_url = f"mssql+pyodbc:///?odbc_connect={connection_string}"
 

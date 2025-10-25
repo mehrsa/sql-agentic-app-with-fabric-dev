@@ -5,15 +5,15 @@ from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
-def fabricsql_connection_bank_db():
-    """Create connection for fabric database."""
-    fabric_conn_str = os.getenv("FABRIC_SQL_CONNECTION_URL_BANK_DATA")
-    return pyodbc.connect(fabric_conn_str)
-
 def fabricsql_connection_agentic_db():
     """Create connection for fabric database."""
     fabric_conn_str = os.getenv("FABRIC_SQL_CONNECTION_URL_AGENTIC")
     return pyodbc.connect(fabric_conn_str)
+
+def fabricsql_connection_bank_db():
+    """DEPRECATED: This function is now an alias for fabricsql_connection_agentic_db."""
+    # Call the main agentic function to consolidate connections
+    return fabricsql_connection_agentic_db()
 
 # below is not used for this demo. But you can use it to connect to an Azure SQL db if needed
 def create_azuresql_connection():
