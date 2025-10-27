@@ -1,8 +1,9 @@
 # 🏦  Agentic Banking App with SQL in Fabric
 
 **Agentic Banking App** is an interactive web application designed to simulate a modern banking dashboard. Its primary purpose is to serve as an educational tool, demonstrating:
-- How SQL-based databases are leveraged across different types of workloads: **OLTP**, **OLAP**, 
+- How SQL-based databases are leveraged across different types of workloads: **OLTP**, **OLAP**, **AI** workloads.
 - How agile **AI-driven analysis and insight discovery** can be enabled via prescriptive data models in Fabric.
+- How easy it is possible to **integrate other Fabric workloads** (e.g., Report, Data Agent, Notebook) leveraging that data model.
 
 Through a hands-on interface, users can see the practical difference between writing a new transaction to the database, running complex analytical queries on historical data, and using natural language to ask an agent to query the database for them.
 
@@ -45,23 +46,29 @@ Through a hands-on interface, users can see the practical difference between wri
 ## 🔧 Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or later)
-- <span style="background-color: yellow">[Python](https://www.python.org/) -- **Must be 3.11.9**</span>
+- [Python](https://www.python.org/)
 - A Fabric workspace 
 - An [Azure OpenAI API Key](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
 - ODBC Driver for SQL Server 18
 - Recommend VSCode as tested in VS Code only
-- This demo <span style="background-color: yellow">runs currently only on a Windows Machine </span>as it support ActiveDirectoryInteractive
+- This demo <span style="background-color: green">runs currently only on a Windows Machine </span>as it support ActiveDirectoryInteractive
 
 ---
 ## Set up required resources
 
-### 1. Fork and clone the Repository
-- Fork the repo (click the fork button, this will create a copy of the repo under your GitHub account.)
-- Clone the forked repo: Navigate to your forked repository on GitHub and click the "Code" button. Copy the URL provided for cloning. Then run below in terminal:
+### 1. Set up your repo
+- Clone this repo: navigate to the repository on GitHub and click the "Code" button. Copy the URL provided for cloning.
+- Open a terminal window on your machine and run below:
 
 ```bash
-git clone <copied url of forked repo>
-cd <sql-agentic-app-with-fabric or main repo folder name if you have changed the name when forking>
+git clone <copied url>
+cd sql-agentic-app-with-fabric  # root folder of the repo
+```
+- Create a **private** repo in your Github account, with the same name. Since you will be adding sensitive credentials, **repo must be private**.
+- Go back to terminal (you should be in the root folder of the repo you cloned) and push the content to your private repo by running below:
+
+```bash
+ git push https://github.com/[replace with you git username]/[replace with your repo name].git
 ```
 ### 2. Set up your Fabric account
 
@@ -70,19 +77,44 @@ cd <sql-agentic-app-with-fabric or main repo folder name if you have changed the
 - In Home tab (with Welcome to Fabric title), click on "New workspace" and proceed to create your workspace for this demo.
 
 ### 3. Automatic set up of all required Fabric resources and artifacts 
-To easily set up your Fabric workspace with all required artifacts for this demo, you need to link your Fabric workspace with your repo
+To easily set up your Fabric workspace with all required artifacts for this demo, you need to link your Fabric workspace with your repo. 
 
-- Go to your workspace and click on "Workspace settings" on top right of the page
-- Go to Git integration tab 
-- Click on GitHub tile and click on "Add account"
-- Choose a name, paste your fine grained personal access token for the repo you just forked (don't know how to generate this? there are a lot of tutorials online such as: https://thetechdarts.com/generate-personal-access-token-in-github/)
-- paste repo url (forked to your account)
-- After connecting to the repo, you will see the option in the same tab to provide the branch and folder name. Branch should be "main" and folder name should be "Fabric_artifacts"
-- Click on "Connect and Sync" 
-- Now the process of pulling all Fabric artifacts from the repo to your workspace starts. This may take a few minutes
+You only need to do below steps one time.
 
+#### Step 1: Set up your database
 
-### 4. Configure Environment Variables
+1. Go to your workspace and click on "Workspace settings" on top right of the page
+2. Go to Git integration tab -> Click on GitHub tile and click on "Add account"
+3. Choose a name, paste your fine grained personal access token for the private repo you just created (don't know how to generate this? there are a lot of tutorials online such as: https://thetechdarts.com/generate-personal-access-token-in-github/)
+4. paste the repo url and connect
+5. After connecting to the repo, you will see the option in the same tab to provide the branch and folder name. Branch should be "main" and folder name should be "Fabric_artifacts"
+    - Click on "Connect and Sync" 
+    - Now the process of pulling all Fabric artifacts from the repo to your workspace starts. This may take a few minutes. Wait until all is done (you will see green check marks)
+    
+#### Step 2: Re-deploy to connect semantic model to the right database endpoint
+
+- In the first step, data artifacts were deployed, but the semantic model needs to be redeloyed by provding the correct database endpoint parameters which you would need to obtain and provide manually as below:
+1. Obtain below values (copy and keep somewhere)
+    - **SQL server connection string**: First, go to the **SQL analytics endpoint** of the agentic_app_db, go to settings -> SQL endpoint -> copy value under SQL connection string  (paste it somewhere to keep it for now)
+    - **Lakehouse analytics GUID**: Look at the address bar, you should see something like this: *https://app.fabric.microsoft.com/groups/[first string]/mirroredwarehouses/**[second string]**?experience=fabric-developer*
+        - copy the value you see in position of second string. 
+2. Now go to: **Fabric_artifacts\agentic_semantic_model.SemanticModel\definition**, open the file called **expressions.tmdl** and replace the values with the ones you just retrieved. *Save the file and push it to your repo*.
+
+3. Now go back to your Fabric workspace and trigger an update via Source Control
+
+4. This will start to set everything up and may take 1-2 minutes 
+
+### 4. Populate your database with sample data
+
+Data will be automatically populated, if not existing, in the SQL Database when you start the backend application.
+
+**Add views to the SQL Analytics endpoint**
+- go to the SQL analytics endpoint of your agentic_lake
+- go to Data_Ingest folder and run all 3 queries that you see in file views.sql
+
+## Follow below steps to run the app locally!
+Now that all resources are set up, follow below steps to run and test the app:
+### 1. Configure Environment Variables
 
 Before running the application, you need to configure your environment variables. This file stores all the secret keys and connection strings your application needs to connect to Azure and Microsoft Fabric resources.
 
@@ -90,14 +122,13 @@ Rename the sample file: In the backend directory, find the file named **.env.sam
 
 Edit the variables: Open the new .env file and fill in the values for the following variables:
 
-#### -> Microsoft Fabric SQL Databases
+**Microsoft Fabric SQL Databases**
 
-FABRIC_SQL_CONNECTION_URL_BANK_DATA: This is the connection string for the database containing **the sample customer banking data**.  You can find this in your Fabric workspace by navigating to the SQL-endpoint of this database, clicking the "settings" -> "Connection strings" -> go to "ODBC" tab and select and copy SQL connection string.
-
-FABRIC_SQL_CONNECTION_URL_AGENTIC: This is the connection string for the Fabric SQL warehouse that will store **the application's operational data** (e.g., chat history). You can find this in your Fabric workspace by navigating to the SQL-endpoint of this database, clicking the "settings" -> "Connection strings" -> go to "ODBC" tab and select and copy SQL connection string.
+FABRIC_SQL_CONNECTION_URL_AGENTIC: This is the connection string for the SQL Database that contains both **the agentic application's operational data** (e.g., chat history) and **the sample customer banking data**. You can find this in your Fabric workspace by navigating to the SQL-endpoint of this database, clicking the "settings" -> "Connection strings" -> go to "ODBC" tab and select and copy SQL connection string.
 
 
-#### -> Azure OpenAI Services
+**Azure OpenAI Services**
+
 **AZURE_OPENAI_KEY**: Your API key for the Azure OpenAI service. You can find this in the Azure Portal by navigating to your Azure OpenAI resource and selecting Keys and Endpoint.
 
 **AZURE_OPENAI_ENDPOINT**: The endpoint URL for your Azure OpenAI service. This is found on the same Keys and Endpoint page in the Azure Portal.
@@ -106,17 +137,7 @@ FABRIC_SQL_CONNECTION_URL_AGENTIC: This is the connection string for the Fabric 
 
 **AZURE_OPENAI_EMBEDDING_DEPLOYMENT**: The name of your embedding model deployment (e.g., "text-embedding-ada-002").
 
-### 5. Populate your database with sample data
-
-- In your Fabric workspace, go to the banking_db database. 
-- Click on "New Query" from the top menu
-- In your local repo folder, go to Data_Ingest and copy content of banking.sql file, paste it in the query tab you opened on Fabric and click on **Run**
-- Sample data should now be populated in the banking_db tables.
-
-## Follow below steps to run the app locally!
-Now that all resources are set up, follow below steps to run and test the app:
-
-### 1. Install Backend Requirements (Flask API)
+### 2. Install Backend Requirements (Flask API)
 In the root project directory run below commands:
 
 ```bash
@@ -127,7 +148,7 @@ pip install -r requirements.txt
 
 ---
 
-### 2. Configure the Frontend (React + Vite)
+### 3. Configure the Frontend (React + Vite)
 
 From the root project directory:
 
@@ -136,15 +157,6 @@ npm install
 ```
 
 ---
-
-### 3. Run Jupyter Notebook to create embeddings from the PDF Document
-
-You need to ingest embeddings from the PDF in the SQL Database
-
-1.  Copy the .env file in the folder **Data_Ingest**.
-2. Open the Jupyter Python Notebook in the path: Data_Ingest/Documentation ingestion_pdf_Bank_App.ipynb
-3. Ensure the Kernel is pointing to the "venv" virtual environment you created previously
-4. Run all the cells in the notebook (you will be prompted for Fabric username and password so watch out for that pop up!)
 
 ### 4. Run the Application
 
@@ -174,7 +186,7 @@ npm run dev
 Frontend will run on: [http://localhost:5173](http://localhost:5173)
 
 ---
-
+ 
 ## Explore Agentic Analytics
 
 As you use the app:
@@ -183,6 +195,16 @@ As you use the app:
 - Agentic_lake lakehouse gets updated
 - The data model captured via agentic_semantic_model is refreshed
 - Agent_Insights report gets updated based on most recent data
+
+## Create and Ingest Embeddings from PDF (optional)
+We automatically ingested embeddings to ensure a quick onboarding. If you are interested to see how to do it, we have stored a python script:
+
+1. Copy the .env file in the folder **Data_Ingest**.
+2. Open the Python script in the path: Data_Ingest/Ingest_pdf.py
+3. Run the script from the folder Data_Ingest (note that doing so might duplicate the same embeddings):
+```bash
+python Ingest_pdf.py
+```
 
 ##  Contributing
 
