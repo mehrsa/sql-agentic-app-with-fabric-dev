@@ -196,7 +196,7 @@ As you use the app:
 - The data model captured via agentic_semantic_model is refreshed
 - Agent_Insights report gets updated based on most recent data
 
-## Create and Ingest Embeddings from PDF (optional)
+## Explore how to create and Ingest Embeddings from PDF (optional)
 We automatically ingested embeddings to ensure a quick onboarding. If you are interested to see how to do it, we have stored a python script:
 
 1. Copy the .env file in the folder **Data_Ingest**.
