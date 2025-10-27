@@ -124,7 +124,7 @@ Edit the variables: Open the new .env file and fill in the values for the follow
 
 **Microsoft Fabric SQL Databases**
 
-FABRIC_SQL_CONNECTION_URL_AGENTIC: This is the connection string for the SQL Database that contains both **the agentic application's operational data** (e.g., chat history) and **the sample customer banking data**. You can find this in your Fabric workspace by navigating to the SQL-endpoint of this database, clicking the "settings" -> "Connection strings" -> go to "ODBC" tab and select and copy SQL connection string.
+**FABRIC_SQL_CONNECTION_URL_AGENTIC**: This is the connection string for the SQL Database that contains both **the agentic application's operational data** (e.g., chat history) and **the sample customer banking data**. You can find this in your Fabric workspace by navigating to the SQL-endpoint of this database, clicking the "settings" -> "Connection strings" -> go to "ODBC" tab and select and copy SQL connection string.
 
 
 **Azure OpenAI Services**
