@@ -5,7 +5,7 @@ SELECT
     CAST([CH1].[created_at] AS DATE) AS [date],
     DATEDIFF(SECOND, [CH1].[created_at], [CH1].[updated_at]) AS [sess_duration]
 FROM [dbo].[chat_sessions] AS [CH1];
-
+GO
 
 CREATE VIEW [dbo].[ContentIssues] AS
 SELECT
@@ -30,6 +30,7 @@ SELECT
 FROM
     [dbo].[chat_history] as ch
 WHERE [ch].[message_type] = 'ai';
+GO
 
 CREATE VIEW UserAsks AS
 SELECT [CH1].[user_id], [CH1].[trace_id], [CH1].[content], [CH1].[session_id], [CH2].[response_time_seconds], [CH1].[date]
@@ -53,3 +54,4 @@ SELECT
     FROM
     [chat_history]) AS CH2 ON [CH1].trace_id = CH2.trace_id
 WHERE [CH2].[response_time_seconds] IS NOT NULL;
+GO
