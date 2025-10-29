@@ -61,7 +61,7 @@ Through a hands-on interface, users can see the practical difference between wri
 - Open a terminal window on your machine and run below:
 
 ```bash
-git clone <copied url>
+git clone https://github.com/Azure-Samples/sql-agentic-app-with-fabric.git
 cd sql-agentic-app-with-fabric  # root folder of the repo
 ```
 - Create a **private** repo in your Github account, with the same name. Since you will be adding sensitive credentials, **repo must be private**.
