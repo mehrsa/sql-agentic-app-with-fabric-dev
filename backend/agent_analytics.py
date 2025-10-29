@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from sqlalchemy.pool import QueuePool
 
 from chat_data_model import init_chat_db
-from shared.db_connect import fabricsql_connection_agentic_db
+from shared.connection_manager import sqlalchemy_connection_creator, connection_manager
 
 load_dotenv(override=True)
 
@@ -17,7 +17,7 @@ CORS(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc://"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'creator': fabricsql_connection_agentic_db,
+    'creator': sqlalchemy_connection_creator,
     'poolclass': QueuePool,
     'pool_size': 5,
     'max_overflow': 10,
@@ -105,22 +105,10 @@ def log_trace():
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
 
     
-# Health check endpoint
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    return jsonify({"status": "healthy", "service": "analytics"}), 200
-
-if __name__ == '__main__':
-    print("[Analytics Service] Connecting to database...")
-    print("You may be prompted for credentials...")
-    
+def initialize_analytics_app():
+    """Initialize analytics app when called from combined launcher."""
     with app.app_context():
         db.create_all()
-        print("[Analytics Service] Database initialized")
         initialize_tool_definitions()
-        print("[Analytics Service] Tool definitions initialized")
         initialize_agent_definitions()
-        print("[Analytics Service] Agent definitions initialized")
-    
-    print("Starting Analytics Service on port 5002...")
-    app.run(debug=False, port=5002, use_reloader=False)
+        print("[Analytics Service] Database tables initialized")

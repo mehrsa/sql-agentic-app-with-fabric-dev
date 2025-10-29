@@ -16,13 +16,12 @@ from langchain_community.vectorstores.utils import DistanceStrategy
 from langchain_sqlserver import SQLServer_VectorStore
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 from langgraph.store.memory import InMemoryStore
-
-from shared.db_connect import fabricsql_connection_bank_db
+from shared.connection_manager import sqlalchemy_connection_creator, connection_manager
 from shared.utils import get_user_id
 import requests  # For calling analytics service
 from langgraph.prebuilt import create_react_agent
 from shared.utils import _serialize_messages
-
+from init_data import check_and_ingest_data
 # Load Environment variables and initialize app
 import os
 load_dotenv(override=True)
@@ -62,7 +61,7 @@ else:
 # Database configuration for Azure SQL (banking data)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc://"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'creator': fabricsql_connection_bank_db,
+    'creator': sqlalchemy_connection_creator,
     'poolclass': QueuePool,
     'pool_size': 5,
     'max_overflow': 10,
@@ -441,13 +440,9 @@ def chatbot():
         "session_id": session_id,
         "tools_used": []
     })
-if __name__ == '__main__':
-    print("[Banking Service] Connecting to database...")
-    print("You may be prompted for credentials...")
-    
+
+def initialize_banking_app():
+    """Initialize banking app when called from combined launcher."""
     with app.app_context():
         db.create_all()
-        print("[Banking Service] Database initialized")
-
-    print("Starting Banking Service on port 5001...")
-    app.run(debug=False, port=5001, use_reloader=False)
+        print("[Banking Service] Database tables initialized")
