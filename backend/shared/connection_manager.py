@@ -1,4 +1,3 @@
-import pyodbc
 from shared.db_connect import fabricsql_connection_agentic_db
 import threading
 import os
