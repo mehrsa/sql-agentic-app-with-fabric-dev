@@ -1,9 +1,8 @@
 expression DatabaseQuery =
 		let
-		    database = Sql.Database("xpkymsttihxelp6vuo2w5ywt2u-dazmpw4rk2uurjfgyevg5bkaye.datawarehouse.fabric.microsoft.com", "8f7391b2-3bfa-4be5-8d4c-dc45c8985233")
+		    database = Sql.Database("replace with connection SQL string of lakehouse analytics endpoint", "lakehouse analytics GUID")
 		in
 		    database
 	lineageTag: 6a0481fe-610a-40d9-a67d-1874dc520a08
 
 	annotation PBI_IncludeFutureArtifacts = False
-
