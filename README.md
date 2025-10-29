@@ -46,15 +46,15 @@ Through a hands-on interface, users can see the practical difference between wri
 ## 🔧 Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or later)
-- [Python](https://www.python.org/)
+- [Python](https://www.python.org/) (3.11.9 or higher)
 - A Fabric workspace 
 - An [Azure OpenAI API Key](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
 - ODBC Driver for SQL Server 18
 - Recommend VSCode as tested in VS Code only
-- This demo <span style="background-color: green">runs currently only on a Windows Machine </span>as it support ActiveDirectoryInteractive
+- This demo <span style="background-color: yellow">runs currently only on a Windows Machine </span>as it support ActiveDirectoryInteractive
 
 ---
-## Set up required resources
+## Set up required resources (One time)
 
 ### 1. Set up your repo
 - Clone this repo: navigate to the repository on GitHub and click the "Code" button. Copy the URL provided for cloning.
