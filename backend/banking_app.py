@@ -620,13 +620,20 @@ def multi_agent_banking_chatbot(messages, session_id, user_id=fixed_user_id):
     # Log analytics
     final_messages = result["messages"][len(historical_messages):]
     analytics_data = {
-        "session_id": session_id,
-        "user_id": user_id,
-        "messages": _serialize_messages(final_messages),
-        "trace_duration": trace_duration,
-    }
+            "session_id": session_id,
+            "user_id": user_id,
+            "messages": _serialize_messages(final_messages),
+            "trace_duration": trace_duration,
+            "agent_used": result["current_agent"],
+            "task_type": result["task_type"],
+            "routing_info": {
+                "coordinator": "coordinator_agent",
+                "target_agent": result["current_agent"],
+                "reason": f"Routed to {result['current_agent']} for {result['task_type']} task"
+            }
+        }
     
-    call_analytics_service("chat/log-trace", data=analytics_data)
+    call_analytics_service("chat/log-multi-agent-trace", data=analytics_data)
     
     return {
         "response": result["final_result"],
